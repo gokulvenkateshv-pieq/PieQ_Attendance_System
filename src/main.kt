@@ -1,4 +1,9 @@
+import data.Department
+import data.Role
+
 fun main()
 {
-    print("hello world")
+    val emp = Employee("","venkat", Role.INTERN, Department.IT,"sa001")
+    val boole = emp.validateEmployee()
+    print(boole)
 }
