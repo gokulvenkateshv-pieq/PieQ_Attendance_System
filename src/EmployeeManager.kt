@@ -1,5 +1,7 @@
 import data.Role
 import data.Department
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class EmployeeManager {
 
@@ -8,6 +10,7 @@ class EmployeeManager {
     companion object {
         private var idCounter = 1
         private val employeeList = EmployeeList()
+        private val attendanceList = AttendanceList()
 
         private fun generateEmployeeId(fName: String, lName: String): String {
             val safeFirst = fName.trim().ifEmpty { "X" }
@@ -75,15 +78,123 @@ class EmployeeManager {
         }
     }
 
-
-
     fun getEmployeeIndex(employeeId: String): Int {
         return employeeList.indexOfFirst { it.employeeId == employeeId }
     }
 
-
     fun getAllEmployees(): List<Employee> = employeeList
 
+    fun checkIn(employeeId: String, dateTime: LocalDateTime): Boolean {
+        val checkInDate = dateTime.toLocalDate()
+
+        if (attendanceList.hasAlreadyCheckedIn(employeeId, checkInDate)) {
+            println("Employee $employeeId has already checked in on $checkInDate.")
+            return false
+        }
+
+        val attendance = Attendance(employeeId, dateTime)
+        attendanceList.add(attendance)
+        println("Employee added")
+        return true
+    }
+
+    fun updateCheckIn(employeeId: String, newCheckInTime: LocalDateTime): Boolean {
+        val checkInDate = newCheckInTime.toLocalDate()
+
+        val record = attendanceList.find {
+            it.employeeId == employeeId &&
+                    it.dateTimeOfCheckIn.toLocalDate() == checkInDate
+        }
+
+        return if (record != null) {
+            record.dateTimeOfCheckIn = newCheckInTime
+            println(" Check-in time updated for $employeeId on $checkInDate.")
+            true
+        } else {
+            println(" No existing check-in found for $employeeId on $checkInDate.")
+            false
+        }
+    }
+
+    fun deleteCheckIn(employeeId: String, date: LocalDate): Boolean {
+        val record = attendanceList.find {
+            it.employeeId == employeeId && it.dateTimeOfCheckIn.toLocalDate() == date
+        }
+
+        return if (record != null) {
+            attendanceList.remove(record)
+            println("Check-in deleted for $employeeId on $date.")
+            true
+        } else {
+            println(" No check-in found for $employeeId on $date.")
+            false
+        }
+    }
+
+    fun checkOut(employeeId: String, dateTime: LocalDateTime): Boolean {
+        val date = dateTime.toLocalDate()
+
+        if (attendanceList.hasAlreadyCheckedOut(employeeId, date)) {
+            println("Employee $employeeId has already checked out on $date.")
+            return false
+        }
+
+        val record = attendanceList.find {
+            it.employeeId == employeeId &&
+                    it.dateTimeOfCheckIn.toLocalDate() == date &&
+                    it.dateTimeOfCheckOut == null
+        }
+
+        return if (record != null) {
+            record.dateTimeOfCheckOut = dateTime
+
+//            // Calculate worked duration
+//            val duration = Duration.between(record.dateTimeOfCheckIn, dateTime)
+//            val hours = duration.toHours()
+//            val minutes = duration.toMinutes() % 60
+//            record.workedHours = "%02d:%02d".format(hours, minutes)
+
+            true
+        } else {
+            println("Check-out failed: No check-in found for Employee $employeeId on $date.")
+            false
+        }
+    }
+
+    fun updateCheckOut(employeeId: String, newCheckOutTime: LocalDateTime): Boolean {
+        val checkOutDate = newCheckOutTime.toLocalDate()
+
+        val record = attendanceList.find {
+            it.employeeId == employeeId &&
+                    it.dateTimeOfCheckIn.toLocalDate() == checkOutDate
+        }
+
+        return if (record != null) {
+            record.dateTimeOfCheckOut = newCheckOutTime
+            println(" Check-in time updated for $employeeId on $checkOutDate.")
+            true
+        } else {
+            println(" No existing check-in found for $employeeId on $checkOutDate.")
+            false
+        }
+    }
+
+    fun deleteCheckOut(employeeId: String, date: LocalDate): Boolean {
+        val record = attendanceList.find {
+            it.employeeId == employeeId && it.dateTimeOfCheckIn.toLocalDate() == date
+        }
+
+        return if (record != null && record.dateTimeOfCheckOut != null) {
+            record.dateTimeOfCheckOut = null
+            println("Check-out time deleted for $employeeId on $date.")
+            true
+        } else {
+            println(" No check-out found for $employeeId on $date.")
+            false
+        }
+    }
+
+    fun getAllAttendance(): List<Attendance> = attendanceList
 
 }
 
