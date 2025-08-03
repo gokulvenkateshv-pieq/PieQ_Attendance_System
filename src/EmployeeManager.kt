@@ -147,13 +147,7 @@ class EmployeeManager {
 
         return if (record != null) {
             record.dateTimeOfCheckOut = dateTime
-
-//            // Calculate worked duration
-//            val duration = Duration.between(record.dateTimeOfCheckIn, dateTime)
-//            val hours = duration.toHours()
-//            val minutes = duration.toMinutes() % 60
-//            record.workedHours = "%02d:%02d".format(hours, minutes)
-
+            record.calculateWorkedHours()
             true
         } else {
             println("Check-out failed: No check-in found for Employee $employeeId on $date.")
@@ -171,6 +165,8 @@ class EmployeeManager {
 
         return if (record != null) {
             record.dateTimeOfCheckOut = newCheckOutTime
+            record.calculateWorkedHours()
+
             println(" Check-in time updated for $employeeId on $checkOutDate.")
             true
         } else {
@@ -186,6 +182,7 @@ class EmployeeManager {
 
         return if (record != null && record.dateTimeOfCheckOut != null) {
             record.dateTimeOfCheckOut = null
+            record.workedHours = null
             println("Check-out time deleted for $employeeId on $date.")
             true
         } else {

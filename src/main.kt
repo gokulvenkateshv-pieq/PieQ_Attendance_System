@@ -28,7 +28,8 @@ fun mainMenu(manager: EmployeeManager) {
             | 9. Update Check Out
             | 10. Delete Check Out
             | 11. View Attendance
-            | 12. Exit
+            | 12. View Worked Hours by Employee
+            | 13. Exit
             |===============================
             | Enter your choice: 
             """.trimMargin()
@@ -101,16 +102,18 @@ fun mainMenu(manager: EmployeeManager) {
             "5" -> {
                 println("Enter Employee ID:")
                 val id = readln()
-                println("Enter Check-in Time (yyyy-MM-dd HH:mm):")
-                val time = parseDateTime(readln())
+                println("Enter Check-in Time (yyyy-MM-dd HH:mm) or press Enter to use current time:")
+                val input = readln()
+                val time = if (input.isBlank()) LocalDateTime.now() else parseDateTime(input)
                 if (time != null) manager.checkIn(id, time)
             }
 
             "6" -> {
                 println("Enter Employee ID:")
                 val id = readln()
-                println("Enter New Check-in Time (yyyy-MM-dd HH:mm):")
-                val time = parseDateTime(readln())
+                println("Enter New Check-in Time (yyyy-MM-dd HH:mm) or press Enter to use current time:")
+                val input = readln()
+                val time = if (input.isBlank()) LocalDateTime.now() else parseDateTime(input)
                 if (time != null) manager.updateCheckIn(id, time)
             }
 
@@ -125,16 +128,18 @@ fun mainMenu(manager: EmployeeManager) {
             "8" -> {
                 println("Enter Employee ID:")
                 val id = readln()
-                println("Enter Check-out Time (yyyy-MM-dd HH:mm):")
-                val time = parseDateTime(readln())
+                println("Enter Check-out Time (yyyy-MM-dd HH:mm) or press Enter to use current time:")
+                val input = readln()
+                val time = if (input.isBlank()) LocalDateTime.now() else parseDateTime(input)
                 if (time != null) manager.checkOut(id, time)
             }
 
             "9" -> {
                 println("Enter Employee ID:")
                 val id = readln()
-                println("Enter New Check-out Time (yyyy-MM-dd HH:mm):")
-                val time = parseDateTime(readln())
+                println("Enter New Check-out Time (yyyy-MM-dd HH:mm) or press Enter to use current time:")
+                val input = readln()
+                val time = if (input.isBlank()) LocalDateTime.now() else parseDateTime(input)
                 if (time != null) manager.updateCheckOut(id, time)
             }
 
@@ -152,6 +157,24 @@ fun mainMenu(manager: EmployeeManager) {
             }
 
             "12" -> {
+                println("Enter Employee ID:")
+                val id = readln()
+
+                val records = manager.getAllAttendance().filter { it.employeeId == id }
+
+                if (records.isEmpty()) {
+                    println("No attendance records found for $id.")
+                } else {
+                    println("Worked Hours for $id:")
+                    records.forEach {
+                        val date = it.dateTimeOfCheckIn.toLocalDate()
+                        val hours = it.workedHours ?: "N/A"
+                        println("$date: $hours")
+                    }
+                }
+            }
+
+            "13" -> {
                 println(" Exiting system. Goodbye!")
                 return
             }
@@ -163,7 +186,7 @@ fun mainMenu(manager: EmployeeManager) {
     }
 }
 
-// Parse datetime: yyyy-MM-dd HH:mm
+// Strict date-time parsing
 fun parseDateTime(input: String?): LocalDateTime? {
     if (input.isNullOrBlank()) return null
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
@@ -175,7 +198,7 @@ fun parseDateTime(input: String?): LocalDateTime? {
     }
 }
 
-// Parse date: yyyy-MM-dd
+// Strict date-only parsing
 fun parseDate(input: String?): LocalDate? {
     if (input.isNullOrBlank()) return null
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")

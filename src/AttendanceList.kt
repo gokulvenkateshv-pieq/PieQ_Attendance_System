@@ -10,9 +10,11 @@ class AttendanceList : ArrayList<Attendance>() {
 
         return this.joinToString(separator = "\n") {
             val checkOut = it.dateTimeOfCheckOut?.toString() ?: "N/A"
-            "${it.employeeId} | Check-in: ${it.dateTimeOfCheckIn} | Check-out: $checkOut"
+            val hours = it.workedHours ?: "N/A"
+            "${it.employeeId} | Check-in: ${it.dateTimeOfCheckIn} | Check-out: $checkOut | Hours Worked: $hours"
         }
     }
+
 
     fun hasAlreadyCheckedIn(employeeId: String, date: LocalDate): Boolean {
         return this.any {
