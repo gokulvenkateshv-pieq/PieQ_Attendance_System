@@ -1,6 +1,7 @@
 import data.Role
 import data.Department
 import java.time.LocalDate
+import java.time.Duration
 import java.time.LocalDateTime
 
 class EmployeeManager {
@@ -87,6 +88,14 @@ class EmployeeManager {
     fun checkIn(employeeId: String, dateTime: LocalDateTime): Boolean {
         val checkInDate = dateTime.toLocalDate()
 
+        if (dateTime.isAfter(LocalDateTime.now())) {
+            println("Check-in time cannot be in the future.")
+            return false
+        }
+
+
+
+
         if (attendanceList.hasAlreadyCheckedIn(employeeId, checkInDate)) {
             println("Employee $employeeId has already checked in on $checkInDate.")
             return false
@@ -100,6 +109,12 @@ class EmployeeManager {
 
     fun updateCheckIn(employeeId: String, newCheckInTime: LocalDateTime): Boolean {
         val checkInDate = newCheckInTime.toLocalDate()
+
+        if (newCheckInTime.isAfter(LocalDateTime.now())) {
+            println("Check-in time cannot be in the future.")
+            return false
+        }
+
 
         val record = attendanceList.find {
             it.employeeId == employeeId &&
@@ -134,6 +149,30 @@ class EmployeeManager {
     fun checkOut(employeeId: String, dateTime: LocalDateTime): Boolean {
         val date = dateTime.toLocalDate()
 
+        val attendanceRecord = attendanceList.find {
+            it.employeeId == employeeId &&
+                    it.dateTimeOfCheckIn.toLocalDate() == date &&
+                    it.dateTimeOfCheckOut == null
+        }
+
+        if (attendanceRecord == null) {
+            println("Check-out failed: No check-in found for Employee $employeeId on $date.")
+            return false
+        }
+
+        if (dateTime.isBefore(attendanceRecord.dateTimeOfCheckIn)) {
+            println("Check-out time cannot be before check-in time.")
+            return false
+        }
+
+
+
+        if (dateTime.isAfter(LocalDateTime.now())) {
+            println("Check-out time cannot be in the future.")
+            return false
+        }
+
+
         if (attendanceList.hasAlreadyCheckedOut(employeeId, date)) {
             println("Employee $employeeId has already checked out on $date.")
             return false
@@ -163,16 +202,26 @@ class EmployeeManager {
                     it.dateTimeOfCheckIn.toLocalDate() == checkOutDate
         }
 
-        return if (record != null) {
-            record.dateTimeOfCheckOut = newCheckOutTime
-            record.calculateWorkedHours()
-
-            println(" Check-in time updated for $employeeId on $checkOutDate.")
-            true
-        } else {
-            println(" No existing check-in found for $employeeId on $checkOutDate.")
-            false
+        if (record == null) {
+            println("No existing check-in found for $employeeId on $checkOutDate.")
+            return false
         }
+
+        if (newCheckOutTime.isAfter(LocalDateTime.now())) {
+            println("Check-out time cannot be in the future.")
+            return false
+        }
+
+        if (newCheckOutTime.isBefore(record.dateTimeOfCheckIn)) {
+            println("Check-out time cannot be before check-in time.")
+            return false
+        }
+
+        record.dateTimeOfCheckOut = newCheckOutTime
+        record.calculateWorkedHours()
+
+        println("Check-out time updated for $employeeId on $checkOutDate.")
+        return true
     }
 
     fun deleteCheckOut(employeeId: String, date: LocalDate): Boolean {
@@ -192,6 +241,63 @@ class EmployeeManager {
     }
 
     fun getAllAttendance(): List<Attendance> = attendanceList
+
+    fun showWorkSummary(from: LocalDate, to: LocalDate) {
+        // Step 1: Filter attendance records in range and with check-out
+        val filteredRecords = attendanceList
+            .filter {
+                val date = it.dateTimeOfCheckIn.toLocalDate()
+                date in from..to && it.dateTimeOfCheckOut != null
+            }
+            .sortedWith(compareBy({ it.employeeId }, { it.dateTimeOfCheckIn })) // Step 2: Sort list by ID and date
+
+        if (filteredRecords.isEmpty()) {
+            println("No attendance records found between $from and $to.")
+            return
+        }
+
+        println("Summary from $from to $to:")
+        println("ID      | Name                  | Total Worked Hours")
+        println("--------|-----------------------|-------------------")
+
+        var tempEmpId: String? = null
+        var totalDuration = Duration.ZERO
+
+        for ((index, record) in filteredRecords.withIndex()) {
+            val id = record.employeeId
+            val duration = Duration.between(record.dateTimeOfCheckIn, record.dateTimeOfCheckOut)
+
+            if (tempEmpId == null) {
+                tempEmpId = id
+            }
+
+            if (id == tempEmpId) {
+                totalDuration = totalDuration.plus(duration)
+            }
+
+            // Check if the record is the last one for this employee
+            val isLastForThisEmp = (index == filteredRecords.lastIndex) ||
+                    (filteredRecords[index + 1].employeeId != tempEmpId)
+
+            if (isLastForThisEmp) {
+                val emp = employeeList.find { it.employeeId == tempEmpId }
+                val name = emp?.let { "${it.firstName} ${it.lastName}" } ?: "Unknown"
+
+                val hours = totalDuration.toHours()
+                val minutes = totalDuration.toMinutes() % 60
+                val formatted = String.format("%02d:%02d", hours, minutes)
+
+                println("${tempEmpId.padEnd(8)}| ${name.padEnd(23)}| $formatted")
+
+                // Reset for next employee
+                totalDuration = Duration.ZERO
+                tempEmpId = if (index != filteredRecords.lastIndex) {
+                    filteredRecords[index + 1].employeeId
+                } else null
+            }
+        }
+    }
+
 
 }
 

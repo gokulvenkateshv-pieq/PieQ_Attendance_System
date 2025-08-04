@@ -12,9 +12,15 @@ class Employee(
 
 {
     fun validateEmployee(): Boolean {
-        return firstName.isNotBlank() &&
-                lastName.isNotBlank() &&
-                reportingTo.isNotBlank()
+            val nameRegex = Regex("^[A-Za-z]+$")
+
+            return firstName.isNotBlank() &&
+                    lastName.isNotBlank() &&
+                    reportingTo.isNotBlank() &&
+                    nameRegex.matches(firstName) &&
+                    nameRegex.matches(lastName)
+
+
     }
 
 

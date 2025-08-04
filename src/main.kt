@@ -44,10 +44,23 @@ fun mainMenu(manager: EmployeeManager) {
                 val lastName = readln()
 
                 println("Enter Role (INTERN, DEVELOPER, MANAGER):")
-                val role = Role.valueOf(readln().uppercase())
+                val roleInput = readln().uppercase()
+                val role = try {
+                    Role.valueOf(roleInput)
+                } catch (_: IllegalArgumentException) {
+                    println("Invalid role. Valid options: INTERN, DEVELOPER, MANAGER")
+                    continue
+                }
+
 
                 println("Enter Department (IT, MARKETING, FINANCE):")
-                val department = Department.valueOf(readln().uppercase())
+                val departmentInput = readln().uppercase()
+                val department = try {
+                    Department.valueOf(departmentInput)
+                } catch (_: IllegalArgumentException) {
+                    println("Invalid role. Valid options: IT, MARKETING, FINANCE")
+                    continue
+                }
 
                 println("Enter Reporting To (Manager ID):")
                 val reportingTo = readln()
@@ -80,10 +93,24 @@ fun mainMenu(manager: EmployeeManager) {
                 val lastName = readln()
 
                 println("Enter New Role (INTERN, DEVELOPER, MANAGER):")
-                val role = Role.valueOf(readln().uppercase())
+                val roleInput = readln().uppercase()
+                val role = try {
+                    Role.valueOf(roleInput)
+                } catch (_: IllegalArgumentException) {
+                    println("Invalid role. Valid options: INTERN, DEVELOPER, MANAGER")
+                    continue
+                }
+
 
                 println("Enter New Department (IT, MARKETING, FINANCE):")
-                val department = Department.valueOf(readln().uppercase())
+                val departmentInput = readln().uppercase()
+                val department = try {
+                    Department.valueOf(departmentInput)
+                } catch (_: IllegalArgumentException) {
+                    println("Invalid role. Valid options: IT, MARKETING, FINANCE")
+                    continue
+                }
+
 
                 println("Enter New Reporting To (Manager ID):")
                 val reportingTo = readln()
@@ -102,6 +129,9 @@ fun mainMenu(manager: EmployeeManager) {
             "5" -> {
                 println("Enter Employee ID:")
                 val id = readln()
+                if (manager.getEmployeeIndex(id) == -1) {
+                    println(" Employee ID not found.")
+                    continue}
                 println("Enter Check-in Time (yyyy-MM-dd HH:mm) or press Enter to use current time:")
                 val input = readln()
                 val time = if (input.isBlank()) LocalDateTime.now() else parseDateTime(input)
@@ -111,6 +141,9 @@ fun mainMenu(manager: EmployeeManager) {
             "6" -> {
                 println("Enter Employee ID:")
                 val id = readln()
+                if (manager.getEmployeeIndex(id) == -1) {
+                    println(" Employee ID not found.")
+                    continue}
                 println("Enter New Check-in Time (yyyy-MM-dd HH:mm) or press Enter to use current time:")
                 val input = readln()
                 val time = if (input.isBlank()) LocalDateTime.now() else parseDateTime(input)
@@ -120,6 +153,9 @@ fun mainMenu(manager: EmployeeManager) {
             "7" -> {
                 println("Enter Employee ID:")
                 val id = readln()
+                if (manager.getEmployeeIndex(id) == -1) {
+                    println(" Employee ID not found.")
+                    continue}
                 println("Enter Check-in Date (yyyy-MM-dd):")
                 val date = parseDate(readln())
                 if (date != null) manager.deleteCheckIn(id, date)
@@ -128,6 +164,9 @@ fun mainMenu(manager: EmployeeManager) {
             "8" -> {
                 println("Enter Employee ID:")
                 val id = readln()
+                if (manager.getEmployeeIndex(id) == -1) {
+                    println(" Employee ID not found.")
+                    continue}
                 println("Enter Check-out Time (yyyy-MM-dd HH:mm) or press Enter to use current time:")
                 val input = readln()
                 val time = if (input.isBlank()) LocalDateTime.now() else parseDateTime(input)
@@ -137,6 +176,9 @@ fun mainMenu(manager: EmployeeManager) {
             "9" -> {
                 println("Enter Employee ID:")
                 val id = readln()
+                if (manager.getEmployeeIndex(id) == -1) {
+                    println(" Employee ID not found.")
+                    continue}
                 println("Enter New Check-out Time (yyyy-MM-dd HH:mm) or press Enter to use current time:")
                 val input = readln()
                 val time = if (input.isBlank()) LocalDateTime.now() else parseDateTime(input)
@@ -146,6 +188,9 @@ fun mainMenu(manager: EmployeeManager) {
             "10" -> {
                 println("Enter Employee ID:")
                 val id = readln()
+                if (manager.getEmployeeIndex(id) == -1) {
+                    println(" Employee ID not found.")
+                    continue}
                 println("Enter Check-out Date (yyyy-MM-dd):")
                 val date = parseDate(readln())
                 if (date != null) manager.deleteCheckOut(id, date)
@@ -159,6 +204,9 @@ fun mainMenu(manager: EmployeeManager) {
             "12" -> {
                 println("Enter Employee ID:")
                 val id = readln()
+                if (manager.getEmployeeIndex(id) == -1) {
+                    println(" Employee ID not found.")
+                    continue}
 
                 val records = manager.getAllAttendance().filter { it.employeeId == id }
 
@@ -175,10 +223,21 @@ fun mainMenu(manager: EmployeeManager) {
             }
 
             "13" -> {
-                println(" Exiting system. Goodbye!")
-                return
-            }
+                println("Enter from date: (yyyy-MM-dd)")
+                val from = parseDate(readln())
 
+                println("Enter to date: (yyyy-MM-dd)")
+                val to = parseDate(readln())
+
+                if (from != null && to != null) {
+                    manager.showWorkSummary(from, to)
+                } else {
+                    println("Invalid date(s). Please try again.")
+                }
+
+            }
+//            println(" Exiting system. Goodbye!")
+//                return
             else -> println(" Invalid choice. Please try again.")
         }
 
