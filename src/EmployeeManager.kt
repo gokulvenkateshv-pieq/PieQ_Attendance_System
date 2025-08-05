@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 class EmployeeManager {
 
     // Declared as static (companion object) so it's shared across all instances.
-    // If not, every new instance would create its own counter and generate duplicate IDs.
+    // If not, every new instance would create its own counter and generate duplicate IDs.//
     companion object {
         private var idCounter = 1
         private val employeeList = EmployeeList()
@@ -126,6 +126,8 @@ class EmployeeManager {
             false
         }
     }
+
+
 
     fun deleteCheckIn(employeeId: String, date: LocalDate): Boolean {
         val record = attendanceList.find {
@@ -248,7 +250,7 @@ class EmployeeManager {
                 date in from..to && it.dateTimeOfCheckOut != null
             }
             .sortedWith(compareBy({ it.employeeId }, { it.dateTimeOfCheckIn })) // Step 2: Sort list by ID and date
-
+//sort by comparator
         if (filteredRecords.isEmpty()) {
             println("No attendance records found between $from and $to.")
             return
@@ -273,7 +275,7 @@ class EmployeeManager {
                 totalDuration = totalDuration.plus(duration)
             }
 
-            // Check if the record is the last one for this employee and next id is not for this employee
+            // Check if the record is the last one for this employee and nextId is not for this employee
             val isLastForThisEmp = (index == filteredRecords.lastIndex) ||
                     (filteredRecords[index + 1].employeeId != tempEmpId)
 
@@ -295,7 +297,5 @@ class EmployeeManager {
             }
         }
     }
-
-
 }
 

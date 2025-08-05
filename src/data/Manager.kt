@@ -10,9 +10,6 @@ enum class Manager(val id: String, val fullName: String) {
     override fun toString(): String = "$fullName ($id)"
 
     companion object {
-        fun fromId(id: String): Manager? {
-            return entries.find { it.id.equals(id.trim(), ignoreCase = true) }
-        }
 
         fun printAll() {
             println("Available Managers:")

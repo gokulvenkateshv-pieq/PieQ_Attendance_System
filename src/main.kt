@@ -38,19 +38,19 @@ fun mainMenu(manager: EmployeeManager) {
         )
 
         when (readln().trim()) {
-            "1" -> addEmployee(manager)
-            "2" -> viewEmployees(manager)
-            "3" -> updateEmployee(manager)
-            "4" -> deleteEmployee(manager)
-            "5" -> checkIn(manager)
-            "6" -> updateCheckIn(manager)
-            "7" -> deleteCheckIn(manager)
-            "8" -> checkOut(manager)
-            "9" -> updateCheckOut(manager)
-            "10" -> deleteCheckOut(manager)
-            "11" -> viewAttendance(manager)
-            "12" -> viewWorkedHours(manager)
-            "13" -> viewWorkSummary(manager)
+            "1" -> handleAddEmployee(manager)
+            "2" -> handleViewEmployees(manager)
+            "3" -> handleUpdateEmployee(manager)
+            "4" -> handleDeleteEmployee(manager)
+            "5" -> handleCheckIn(manager)
+            "6" -> handleUpdateCheckIn(manager)
+            "7" -> handleDeleteCheckIn(manager)
+            "8" -> handleCheckOut(manager)
+            "9" -> handleUpdateCheckOut(manager)
+            "10" -> handleDeleteCheckOut(manager)
+            "11" -> handleViewAttendance(manager)
+            "12" -> handleViewWorkedHours(manager)
+            "13" -> handleViewWorkSummary(manager)
             "14" -> {
                 println("Exiting system. Goodbye!")
                 return
@@ -62,7 +62,7 @@ fun mainMenu(manager: EmployeeManager) {
     }
 }
 
-fun addEmployee(manager: EmployeeManager) {
+fun handleAddEmployee(manager: EmployeeManager) {
     println("Enter First Name:")
     val firstName = readln()
 
@@ -110,12 +110,12 @@ fun addEmployee(manager: EmployeeManager) {
     }
 }
 
-fun viewEmployees(manager: EmployeeManager) {
+fun handleViewEmployees(manager: EmployeeManager) {
     println(" All Employees:")
     println(manager.getAllEmployees())
 }
 
-fun updateEmployee(manager: EmployeeManager) {
+fun handleUpdateEmployee(manager: EmployeeManager) {
     println("Enter Employee ID to Update:")
     val id = readln()
     if (manager.getEmployeeIndex(id) == -1) {
@@ -163,14 +163,14 @@ fun updateEmployee(manager: EmployeeManager) {
     println(if (updated) " Employee updated." else " Update failed.")
 }
 
-fun deleteEmployee(manager: EmployeeManager) {
+fun handleDeleteEmployee(manager: EmployeeManager) {
     println("Enter Employee ID to Delete:")
     val id = readln()
     val deleted = manager.deleteEmployee(id)
     println(if (deleted) " Employee deleted." else " Employee not found.")
 }
 
-fun checkIn(manager: EmployeeManager) {
+fun handleCheckIn(manager: EmployeeManager) {
     println("Enter Employee ID:")
     val id = readln()
     if (manager.getEmployeeIndex(id) == -1) {
@@ -183,7 +183,7 @@ fun checkIn(manager: EmployeeManager) {
     if (time != null) manager.checkIn(id, time)
 }
 
-fun updateCheckIn(manager: EmployeeManager) {
+fun handleUpdateCheckIn(manager: EmployeeManager) {
     println("Enter Employee ID:")
     val id = readln()
     if (manager.getEmployeeIndex(id) == -1) {
@@ -196,7 +196,7 @@ fun updateCheckIn(manager: EmployeeManager) {
     if (time != null) manager.updateCheckIn(id, time)
 }
 
-fun deleteCheckIn(manager: EmployeeManager) {
+fun handleDeleteCheckIn(manager: EmployeeManager) {
     println("Enter Employee ID:")
     val id = readln()
     if (manager.getEmployeeIndex(id) == -1) {
@@ -208,7 +208,7 @@ fun deleteCheckIn(manager: EmployeeManager) {
     if (date != null) manager.deleteCheckIn(id, date)
 }
 
-fun checkOut(manager: EmployeeManager) {
+fun handleCheckOut(manager: EmployeeManager) {
     println("Enter Employee ID:")
     val id = readln()
     if (manager.getEmployeeIndex(id) == -1) {
@@ -221,7 +221,7 @@ fun checkOut(manager: EmployeeManager) {
     if (time != null) manager.checkOut(id, time)
 }
 
-fun updateCheckOut(manager: EmployeeManager) {
+fun handleUpdateCheckOut(manager: EmployeeManager) {
     println("Enter Employee ID:")
     val id = readln()
     if (manager.getEmployeeIndex(id) == -1) {
@@ -234,7 +234,7 @@ fun updateCheckOut(manager: EmployeeManager) {
     if (time != null) manager.updateCheckOut(id, time)
 }
 
-fun deleteCheckOut(manager: EmployeeManager) {
+fun handleDeleteCheckOut(manager: EmployeeManager) {
     println("Enter Employee ID:")
     val id = readln()
     if (manager.getEmployeeIndex(id) == -1) {
@@ -246,12 +246,12 @@ fun deleteCheckOut(manager: EmployeeManager) {
     if (date != null) manager.deleteCheckOut(id, date)
 }
 
-fun viewAttendance(manager: EmployeeManager) {
+fun handleViewAttendance(manager: EmployeeManager) {
     println(" Attendance Records:")
     println(manager.getAllAttendance())
 }
 
-fun viewWorkedHours(manager: EmployeeManager) {
+fun handleViewWorkedHours(manager: EmployeeManager) {
     println("Enter Employee ID:")
     val id = readln()
     if (manager.getEmployeeIndex(id) == -1) {
@@ -273,7 +273,7 @@ fun viewWorkedHours(manager: EmployeeManager) {
     }
 }
 
-fun viewWorkSummary(manager: EmployeeManager) {
+fun handleViewWorkSummary(manager: EmployeeManager) {
     println("Enter from date: (yyyy-MM-dd)")
     val from = parseDate(readln())
 
