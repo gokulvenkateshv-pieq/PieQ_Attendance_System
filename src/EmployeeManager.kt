@@ -27,7 +27,7 @@ class EmployeeManager {
         lastName: String,
         role: Role,
         department: Department,
-        reportingTo: String
+        reportingTo: String?
     ): Employee? {
         val generatedId = generateEmployeeId(firstName,lastName)
         val employee = Employee(generatedId, firstName, lastName, role, department, reportingTo)
@@ -47,7 +47,7 @@ class EmployeeManager {
         lastName: String,
         role: Role,
         department: Department,
-        reportingTo: String
+        reportingTo: String?
     ): Boolean {
         val index = getEmployeeIndex(employeeId)
         if (index == -1) {
@@ -92,10 +92,6 @@ class EmployeeManager {
             println("Check-in time cannot be in the future.")
             return false
         }
-
-
-
-
         if (attendanceList.hasAlreadyCheckedIn(employeeId, checkInDate)) {
             println("Employee $employeeId has already checked in on $checkInDate.")
             return false
@@ -187,6 +183,8 @@ class EmployeeManager {
         return if (record != null) {
             record.dateTimeOfCheckOut = dateTime
             record.calculateWorkedHours()
+            println("Employee Checked Out")
+
             true
         } else {
             println("Check-out failed: No check-in found for Employee $employeeId on $date.")
@@ -275,7 +273,7 @@ class EmployeeManager {
                 totalDuration = totalDuration.plus(duration)
             }
 
-            // Check if the record is the last one for this employee
+            // Check if the record is the last one for this employee and next id is not for this employee
             val isLastForThisEmp = (index == filteredRecords.lastIndex) ||
                     (filteredRecords[index + 1].employeeId != tempEmpId)
 

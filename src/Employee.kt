@@ -7,7 +7,7 @@ class Employee(
     val lastName: String,
     val role: Role,
     val department: Department,
-    val reportingTo: String
+    val reportingTo: String?
 )
 
 {
@@ -16,7 +16,6 @@ class Employee(
 
             return firstName.isNotBlank() &&
                     lastName.isNotBlank() &&
-                    reportingTo.isNotBlank() &&
                     nameRegex.matches(firstName) &&
                     nameRegex.matches(lastName)
 
