@@ -1,20 +1,36 @@
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class Attendance(
     val employeeId: String,
     var dateTimeOfCheckIn: LocalDateTime,
     var dateTimeOfCheckOut: LocalDateTime? = null,
-    var workedHours: String? = null
+    var workedHours: Duration = Duration.ZERO
+
 ) {
-    fun calculateWorkedHours() {
-        if (dateTimeOfCheckOut != null) {
-            val duration = Duration.between(dateTimeOfCheckIn, dateTimeOfCheckOut)
-            val hours = duration.toHours()
-            val minutes = duration.toMinutes() % 60
-            workedHours = String.format("%02d:%02d", hours, minutes)
-        } else {
-            workedHours = null
+
+    fun checkOut(dateTime: LocalDateTime) {
+        this.dateTimeOfCheckOut = dateTime
+        val duration = Duration.between(dateTimeOfCheckIn, dateTimeOfCheckOut)
+
+        if (duration > Duration.ZERO) {
+            this.workedHours = duration
         }
     }
+
+
+    override fun toString(): String {
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+        val checkInDate = dateTimeOfCheckIn.format(dateFormatter)
+        val checkInTime = dateTimeOfCheckIn.format(timeFormatter)
+        val checkOutTime = dateTimeOfCheckOut?.format(timeFormatter) ?: "N/A"
+
+        return "Employee ID: $employeeId, Date: $checkInDate, Check-In: $checkInTime, Check-Out: $checkOutTime, Worked Hours: ${workedHours.toHours()}h ${workedHours.toMinutesPart()}m"
+    }
+
+
+
 }

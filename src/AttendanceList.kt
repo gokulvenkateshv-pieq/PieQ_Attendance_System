@@ -1,4 +1,5 @@
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class AttendanceList : ArrayList<Attendance>() {
     override fun add(element: Attendance): Boolean {
@@ -8,13 +9,8 @@ class AttendanceList : ArrayList<Attendance>() {
     override fun toString(): String {
         if (this.isEmpty()) return "No attendance records found."
 
-        return this.joinToString(separator = "\n") {
-            val checkOut = it.dateTimeOfCheckOut?.toString() ?: "N/A"
-            val hours = it.workedHours ?: "N/A"
-            "${it.employeeId} | Check-in: ${it.dateTimeOfCheckIn} | Check-out: $checkOut | Hours Worked: $hours"
-        }
+        return this.joinToString(separator = "\n")
     }
-
 
     fun hasAlreadyCheckedIn(employeeId: String, date: LocalDate): Boolean {
         return this.any {
@@ -23,11 +19,32 @@ class AttendanceList : ArrayList<Attendance>() {
         }
     }
 
-    fun hasAlreadyCheckedOut(employeeId: String, date: LocalDate): Boolean {
-        return this.any {
+    //check id exist,checkIn done on that date and checkout not null and after checkIn
+    fun validateCheckedOut(employeeId: String, date: LocalDateTime): Attendance?{
+
+        return this.find {
             it.employeeId == employeeId &&
-                    it.dateTimeOfCheckIn.toLocalDate() == date &&
-                    it.dateTimeOfCheckOut != null
+                    it.dateTimeOfCheckIn.toLocalDate() == date.toLocalDate() &&
+                    it.dateTimeOfCheckOut == null &&
+                    date.isAfter(it.dateTimeOfCheckIn) }
+    }
+
+    fun deleteAttendanceRecord(employeeId: String,date: LocalDate): Boolean
+    {
+        val record = this.find {
+            it.employeeId == employeeId && it.dateTimeOfCheckIn.toLocalDate() == date
+        }
+
+        return if (record != null) {
+            this.remove(record)
+            true
+        } else {
+            false
         }
     }
+
+
+
 }
+
+
